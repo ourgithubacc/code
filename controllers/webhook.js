@@ -25,6 +25,7 @@ async function  handleWebhook (req, res)  {
       }).save()
         const title = event.data.metadata.theEvent
       const ourEvent = Event.findOne({title:title })
+      console.log(event);
       if(event.event === 'charge.success' || 'transfer.success'){    
              const token = await new Token({
                 token: ((Math.random() + 1).toString(36).substring(7)).toUpperCase(),
