@@ -24,9 +24,10 @@ async function  handleWebhook (req, res)  {
         webhookEvent: event
       }).save()
         const title = event.data.metadata.theEvent
-      const ourEvent = Event.findOne({title:title })
+      //const ourEvent = Event.findOne({title:title })
       console.log(event);
-      console.log(ourEvent);
+            console.log(title);
+      //console.log(ourEvent);
       if(event.event === 'charge.success' || 'transfer.success'){    
              const token = await new Token({
                 token: ((Math.random() + 1).toString(36).substring(7)).toUpperCase(),
@@ -40,7 +41,7 @@ async function  handleWebhook (req, res)  {
                 token: token.token,
                 qrCode,
                 email:token.email,
-                ourEvent
+                title
               }).save();
               const body = `Purchase Successful. Your Ticket has been generated, go to "Ticket" in the profile section of the BUSA app and input your token.`
               await sendEmail(token.email,body,"Payment Successful");
