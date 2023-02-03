@@ -14,9 +14,11 @@ const ticketSchema = mongoose.Schema({
         type:String,
         trim:true
     },
-    ourEvent:{
-        type: Object
-    }
+   title:{
+   type: String,
+   trim:true,
+   required: true
+   }
 })
 
 module.exports = mongoose.model('Ticket',ticketSchema);
