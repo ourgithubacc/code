@@ -35,7 +35,7 @@ async function  handleWebhook (req, res)  {
                 email
               }).save();
                 
-            const qrCode = qr.toDataURL(token.token)
+            const qrCode =  await qr.toDataURL(token.token)
 
               const ticket = await new Ticket({
                 token: token.token,
