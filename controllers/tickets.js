@@ -94,6 +94,27 @@ exports.getTicketById = async (req,res) =>{
     })
   }
 }
+
+exports.getTicketByEmail  = async(req,res) =>{
+  try {
+    const email = req.body
+
+
+    const tickets = Ticket.findOne({email: email})
+
+    res.status(200).json({
+      success: true,
+      data: tickets
+    })
+    
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      success: false,
+      message:"Internal Error Occured"
+    })
+  }
+}
 exports.deleteTicketById = async (req,res) =>{
   try{
     const ticket = await Ticket.findByIdAndDelete(req.params.ticketId)
