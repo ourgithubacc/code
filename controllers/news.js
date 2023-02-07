@@ -10,63 +10,74 @@ let dateOfExpire = moment(new Date()).add(2, 'w').toDate();
 //@desc -> add news
 exports.addNews = async (req, res) =>{
     try {
-        upload.array('newsImage') 
-        const uploader = async (path) => await cloudinary.uploads(path,'Images')
+        //upload.array('newsImage') 
+        //const uploader = async (path) => await cloudinary.uploads(path,'Images')
 
-        if(req.method === 'POST'){
+        // if(req.method === 'POST'){
          
-            const urls = []
-            let url;
+        //     const urls = []
+        //     let url;
       
-            const files = req.files.newsImage
-        if (files.length > 1){
+        //     const files = req.files.newsImage
+        // if (files.length > 1){
     
   
-            for(const file of files){
-                const { path } = file
+        //     for(const file of files){
+        //         const { path } = file
           
           
-                const newPath = await uploader(path)
+        //         const newPath = await uploader(path)
           
           
-                urls.push(newPath)
+        //         urls.push(newPath)
           
-                fs.unlinkSync(path)
-              }
-        } else{
+        //         fs.unlinkSync(path)
+        //       }
+        // } else{
             
-            const { path } = req.files.newsImage
+        //     const { path } = req.files.newsImage
           
           
-            const newPath = await uploader(path)
+        //     const newPath = await uploader(path)
       
-            //url = newPath
+        //     //url = newPath
             
-            urls.push(newPath)
+        //     urls.push(newPath)
       
-            fs.unlinkSync(path)
-        }
+        //     fs.unlinkSync(path)
+        // }
       
-          const {title,category, campus} = req.body;
+        //   const {title,category, campus} = req.body;
          
          
-          const news = await new News({
-            title, category, campus, data: urls ,addedAt: Date.now(), expiryDate: dateOfExpire
-        }).save();
+        //   const news = await new News({
+        //     title, category, campus, images: urls ,addedAt: Date.now(), expiryDate: dateOfExpire
+        // }).save();
       
-        if(news) {
-            res.status(201).json({
-                success:true,
-                msg:"Successfully added new",
-                data: news
-            })
-          }
+        // if(news) {
+        //     res.status(201).json({
+        //         success:true,
+        //         msg:"Successfully added new",
+        //         data: news
+        //     })
+        //   }
     
-        } else{
-          res.status(405).json({
-            err: 'News not Uploaded succesfully'
-          })
-        }
+        // } else{
+        //   res.status(405).json({
+        //     err: 'News not Uploaded succesfully'
+        //   })
+        // }
+        const {title,category, campus} = req.body;
+        const images = req.files.images
+          const news = await new News({
+            title, category, campus, images,addedAt: Date.now(), expiryDate: dateOfExpire
+        }).save();
+
+        res.status(200).json({
+            success: true,
+            data: news
+
+        })
     } catch (error) {
         console.log(error)
         res.status(500).json({
