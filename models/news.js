@@ -25,7 +25,7 @@ const newsSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    data:{
+    images:{
         type:Array,
         trim:true
     },
