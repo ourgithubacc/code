@@ -3,6 +3,7 @@ const Token = require('../models/token')
 const moment = require('moment');
 const Ticket = require('../models/tickets')
 const {sendEmail} = require('../helper/sendEmail')
+const User = require('../models/user')
 
 
 exports.getAllTickets = async(req,res) =>{
