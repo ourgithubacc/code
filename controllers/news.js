@@ -67,10 +67,10 @@ exports.addNews = async (req, res) =>{
         //     err: 'News not Uploaded succesfully'
         //   })
         // }
-        const {title,category, campus} = req.body;
+        const {title,category, campus, content} = req.body;
         const images = req.files.images
           const news = await new News({
-            title, category, campus, images,addedAt: Date.now(), expiryDate: dateOfExpire
+            title, category, campus, content, images,addedAt: Date.now(), expiryDate: dateOfExpire
         }).save();
 
         res.status(200).json({
