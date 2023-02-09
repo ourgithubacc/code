@@ -1,74 +1,21 @@
 const Event = require('../models/event');
-
 const sendToAll = require('../helper/notification');
-const cloudinary = require('../controllers/cloudinary')
-const upload = require('../controllers/multer')
 const fs = require('fs')
 const sendEmail = require('../helper/sendEmail')
 
 //const Imagetobase64 = require('image-to-base64')
 exports.uploadEvent = async (req,res,next) =>{
     try {
-        const {title, description, addedAt,host, campus, ticketPrice, venue, startDateAndTime, endDateAndTime} = req.body;
-        upload.array('eventImage') 
-        const uploader = async (path) => await cloudinary.uploads(path,'Images')
-
-        if(req.method === 'POST'){
-         
-            const urls = []
-            let url;
-      
-            const files = req.files.eventImage
-        if (files.length > 1){
-    
-  
-            for(const file of files){
-                const { path } = file
-          
-          
-                const newPath = await uploader(path)
-          
-          
-                urls.push(newPath)
-          
-                fs.unlinkSync(path)
-              }
-        } else{
-            
-            const { path } = req.files.eventImage
-          
-          
-            const newPath = await uploader(path)
-      
-            //url = newPath
-            
-            urls.push(newPath)
-      
-            fs.unlinkSync(path)
-        }
-      
-
-        const event = await new Event({
-            title, description,campus,ticketPrice, host, venue,addedAt,startDateAndTime,endDateAndTime, data: urls,addedAt: Date.now(), 
+    const {title, description, addedAt,host, campus, ticketPrice, venue, startDateAndTime, endDateAndTime} = req.body;
+    const images = req.files.images
+            const event = await new Event({
+            title, description,campus,ticketPrice, host, venue,addedAt,startDateAndTime,endDateAndTime,images,addedAt: Date.now(), 
         }).save();
 
-        if(event) {
-            res.status(201).json({
-                success:true,
-                msg:"Successfully added new Event",
-                data: event
-            });
-            
-            
-        } else {
-            res.status(400).json({
-                success: false,
-                msg:"Invalid Event Data"
-            });
-        }
-    }
-   
-    
+    res.status(200).json({
+        success: true,
+        data: event
+    })
    }  catch (error) {
         console.log(error);
         res.status(500).json({
@@ -283,7 +230,7 @@ exports.getIperuCampusEvents = async (req,res, next)=>{
     
       
          
-    const events = await Event.find({campus: 'Main' || 'Both'})
+    const events = await Event.find({campus: 'Iperu'})
          .sort('-addedAt')
          .populate({ path: 'category', select: ['_id', 'category_name'] })
          .limit(Number(query.limit))
@@ -322,9 +269,9 @@ exports.getMainCampusEvent = async (req,res, next)=>{
         query.limit = size;
 
     
-      
+    
          
-    const events = await Event.find({campus: 'Main' || 'Both'})
+    const events = await Event.find({campus: "Main"})
          .sort('-addedAt')
          .populate({ path: 'category', select: ['_id', 'category_name'] })
          .limit(Number(query.limit))
