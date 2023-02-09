@@ -98,19 +98,17 @@ exports.getTicketById = async (req,res) =>{
 
 exports.getTicketByEmail  = async(req,res) =>{
   try {
-    const {email} = req.body
+   // const {email} = req.params
 
     
-
-
-     const tickets = await Ticket.find({email: email} ,(err,email)=>{
+     const tickets = await Ticket.find(req.params.email ,(err,email)=>{
       if(err || !email){
           console.log(err);
           return res.status(403).json({
               error: err
           })
       }
-    }).exec()
+    })
     res.status(200).json({
       success: true,
       data: tickets
