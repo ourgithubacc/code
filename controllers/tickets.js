@@ -110,7 +110,7 @@ exports.getTicketByEmail  = async(req,res) =>{
               error: err
           })
       }
-    })
+    }).exec()
     res.status(200).json({
       success: true,
       data: tickets
