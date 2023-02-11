@@ -12,17 +12,7 @@ const eventSchema = mongoose.Schema({
         trim:true
     },
     addedAt:{
-        type: Date,
-        //required: true
-    },
-    eventImage:{
-        type: String,
-        //required: true
-    },
-    host_name: {
-        type: String,
-        //ref:'Host',
-       // required: true
+        type: Date
     },
     campus: {
         type: String,
@@ -33,23 +23,15 @@ const eventSchema = mongoose.Schema({
         trim: true,
         required: true
     },
-    data:{
-    type: Array,
-    trim: true,
-    required: true
+    images:{
+        type: Array,
+        trim: true,
+        required: true
     },
     venue:{
         type: String,
         required: true,
         trim: true
-    },
-    // time:{
-    //     type: String,
-    //     trim: true,
-    //     required: true
-    // },
-    url:{
-        type:Object
     },
     startDateAndTime:{
         type: Date,
@@ -63,8 +45,6 @@ const eventSchema = mongoose.Schema({
         type:Boolean,
         trim:true
     }
-
-
     
 })
 
