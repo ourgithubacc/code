@@ -10,75 +10,67 @@ let dateOfExpire = moment(new Date()).add(2, 'w').toDate();
 //@desc -> add news
 exports.addNews = async (req, res) =>{
     try {
-        //upload.array('newsImage') 
-        //const uploader = async (path) => await cloudinary.uploads(path,'Images')
+        const {title,campus, content} = req.body;
+        const image = req.files.image
+        let  urls = []
 
-        // if(req.method === 'POST'){
-         
-        //     const urls = []
-        //     let url;
-      
-        //     const files = req.files.newsImage
-        // if (files.length > 1){
+        if(image.length > 1){
+            let images = []
+            let x = image.length
+            for(let i = 0; i < x; i++){
+                images.push(image[i].path)
+            }
+
+            let y = images.length
+            for(let i = 0; i < y; i++ ){
+              await  cloudinary.uploader.upload(
+                    images[i],
+                    { upload_preset: 'BUSA_NEWS_IMAGE' },
+                    function(error, result) {
+                        if(error){
+                            console.log(error)
+                        }
+
+                        urls.push(result.secure_url)
+                    }
+                );
+
+            }
+        
+              const news = await new News({
+                title, category, campus, content, images: urls,addedAt: Date.now()
+            }).save();
+
+            res.status(200).json({
+                success: true,
+                data: news
     
-  
-        //     for(const file of files){
-        //         const { path } = file
-          
-          
-        //         const newPath = await uploader(path)
-          
-          
-        //         urls.push(newPath)
-          
-        //         fs.unlinkSync(path)
-        //       }
-        // } else{
-            
-        //     const { path } = req.files.newsImage
-          
-          
-        //     const newPath = await uploader(path)
-      
-        //     //url = newPath
-            
-        //     urls.push(newPath)
-      
-        //     fs.unlinkSync(path)
-        // }
-      
-        //   const {title,category, campus} = req.body;
-         
-         
-        //   const news = await new News({
-        //     title, category, campus, images: urls ,addedAt: Date.now(), expiryDate: dateOfExpire
-        // }).save();
-      
-        // if(news) {
-        //     res.status(201).json({
-        //         success:true,
-        //         msg:"Successfully added new",
-        //         data: news
-        //     })
-        //   }
+            })
+
+        } else{
+            const result = await   cloudinary.uploader.upload(
+                image.path,
+                { upload_preset: 'BUSA_NEWS_IMAGE' },
+                function(error, result) {
+                    if(error){
+                        console.log(error);
+                    }
+                }
+              );
+              const news = await new News({
+                title, category, campus, content, images: result.secure_url,addedAt: Date.now()
+            }).save();
     
-        // } else{
-        //   res.status(405).json({
-        //     err: 'News not Uploaded succesfully'
-        //   })
-        // }
-        const {title,category, campus, content} = req.body;
-        const images = req.files.images
-          const news = await new News({
-            title, category, campus, content, images,addedAt: Date.now(), expiryDate: dateOfExpire
-        }).save();
-
-        res.status(200).json({
-            success: true,
-            data: news
-
-        })
-    } catch (error) {
+            res.status(200).json({
+                success: true,
+                data: news
+    
+            })
+        }
+      
+     
+     
+} catch (error) {
         console.log(error)
         res.status(500).json({
             success: false,
