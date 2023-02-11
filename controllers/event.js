@@ -6,16 +6,64 @@ const sendEmail = require('../helper/sendEmail')
 //const Imagetobase64 = require('image-to-base64')
 exports.uploadEvent = async (req,res,next) =>{
     try {
-    const {title, description, addedAt,host, campus, ticketPrice, venue, startDateAndTime, endDateAndTime} = req.body;
-    const images = req.files.images
-            const event = await new Event({
-            title, description,campus,ticketPrice, host, venue,addedAt,startDateAndTime,endDateAndTime,images,addedAt: Date.now(), 
-        }).save();
+    const {title, description, campus, ticketPrice, venue, startDateAndTime, endDateAndTime} = req.body;
+    const image = req.files.image
+    let  urls = []
 
-    res.status(200).json({
-        success: true,
-        data: event
-    })
+    if(image.length > 1){
+        let images = []
+        let x = image.length
+        for(let i = 0; i < x; i++){
+            images.push(image[i].path)
+        }
+
+        let y = images.length
+        for(let i = 0; i < y; i++ ){
+          await  cloudinary.uploader.upload(
+                images[i],
+                { upload_preset: 'BUSA_NEWS_IMAGE' },
+                function(error, result) {
+                    if(error){
+                        console.log(error)
+                    }
+
+                    urls.push(result.secure_url)
+                }
+            );
+
+        }
+    
+        const event = await new Event({
+            title,ticketPrice,description,venue, images: urls, addedAt: Date.now(), campus, startDateAndTime, endDateAndTime
+        })
+
+        res.status(200).json({
+            success: true,
+            data: event
+
+        })
+
+    } else{
+        const result = await   cloudinary.uploader.upload(
+            image.path,
+            { upload_preset: 'BUSA_NEWS_IMAGE' },
+            function(error, result) {
+                if(error){
+                    console.log(error);
+                }
+            }
+          );
+       
+            const event = await new Event({
+                title,ticketPrice,description,venue, images: result.secure_url, addedAt: Date.now(), campus, startDateAndTime, endDateAndTime
+            })
+        res.status(200).json({
+            success: true,
+            data: event
+
+        })
+    }
+  
    }  catch (error) {
         console.log(error);
         res.status(500).json({
