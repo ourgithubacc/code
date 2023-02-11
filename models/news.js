@@ -7,17 +7,6 @@ const newsSchema = mongoose.Schema({
     content:{
         type: String
     },
-    url:{
-        type:Object
-    },
-//     newsImage:{
-//         type: String,
-       
-//     },
-    category:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category'
-    },
     addedAt: {
         type: Date
     },
@@ -26,16 +15,7 @@ const newsSchema = mongoose.Schema({
         required: true
     },
     images:{
-        type:Array,
-        trim:true
-    },
-    expiryDate:{
-        type: Array,
-        trim: true
-    },
-    isExpired:{
-        type: Boolean,
-        trim: true
+        type: Array
     }
 })
 
