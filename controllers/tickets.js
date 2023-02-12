@@ -100,7 +100,7 @@ exports.getTicketByEmail  = async (req,res) =>{
   try {
     const email = req.params.email
     
-    const tickets = await Ticket.find({email: `${email}`}).exec()
+    const tickets = await Ticket.find({email: email}).exec()
     res.status(200).json({
       success: true,
        data: tickets
@@ -231,8 +231,12 @@ exports.generateAndSaveTicket  = async(req,res) =>{
         email:token.email,
         title: event.title
       }).save();
-  
-    } else{
+      
+      await sendEmail(email,"Ticket Generated and stored. Go to Tickets on the profile section", "Ticket Generated")
+      res.status(200).json({
+        success:true
+      })
+    } else if(!user || !event){
       res.status(400).json({
         success: false,
         message: "Such email does not exist. Re-enter the correct email"
@@ -240,15 +244,13 @@ exports.generateAndSaveTicket  = async(req,res) =>{
     }
    
 
-    res.status(200).json({
-      success:true
-    })
+   
   } catch (error) {
     console.log(error)
-    res.status(500).json({
-      success: false,
-      message: "Internal Error Occured"
-    })
+    // res.status(500).json({
+    //   success: false,
+    //   message: "Internal Error Occured"
+    // })
   }
 
 }
@@ -256,7 +258,11 @@ exports.generateAndSaveTicket  = async(req,res) =>{
 
 exports.deleteAll = async(req,res)=>{
   try {
-    const events = await Event.find({}).deleteMany({})
+    const tickets = await Ticket.find({}).deleteMany({})
+
+    res.status(200).json({
+      success: true
+    })
   } catch (error) {
     console.log(error)
     res.status(500).json({
