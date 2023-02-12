@@ -2,6 +2,7 @@ const Event = require('../models/event');
 const sendToAll = require('../helper/notification');
 const fs = require('fs')
 const sendEmail = require('../helper/sendEmail')
+const cloudinary = require('../controllers/cloudinary')
 
 //const Imagetobase64 = require('image-to-base64')
 exports.uploadEvent = async (req,res,next) =>{
@@ -35,7 +36,7 @@ exports.uploadEvent = async (req,res,next) =>{
     
         const event = await new Event({
             title,ticketPrice,description,venue, images: urls, addedAt: Date.now(), campus, startDateAndTime, endDateAndTime
-        })
+        }).save()
 
         res.status(200).json({
             success: true,
@@ -56,7 +57,7 @@ exports.uploadEvent = async (req,res,next) =>{
        
             const event = await new Event({
                 title,ticketPrice,description,venue, images: result.secure_url, addedAt: Date.now(), campus, startDateAndTime, endDateAndTime
-            })
+            }).save()
         res.status(200).json({
             success: true,
             data: event
@@ -136,7 +137,6 @@ exports.getEventByTitle = async (req,res,next) =>{
             }
         })
          .sort('-addedAt')
-        //.populate({ path: 'host', select: ['_id', 'host_name'] })
 
          res.json({
             success: true,
@@ -152,32 +152,6 @@ exports.getEventByTitle = async (req,res,next) =>{
 }
 
 
-// exports.getEventsByHost = async (req,res,next) =>{
-//     try {
-//         const {host_name} = req.body
-//         const event = await Event.findOne({host:host_name},(err,host_name)=>{
-//             if(err || !title){
-//                 console.log(err);
-//                 return res.status(403).json({
-//                     error: err
-//                 })
-//             }
-//         })
-//          .populate({ path: 'host', select: ['_id', 'host_name'] })
-
-//          res.json({
-//             success: true,
-//             count: event.length,
-//             data: event
-//          });
-        
-//     } catch (error) {
-//         res.status(500).json({
-//             success: false,
-//             msg: 'Internal Error Occured'
-//         });
-//     }
-// }
 
 exports.deleteEvent = async (req,res,next) =>{
     try {
@@ -366,7 +340,7 @@ exports.deleteAllIperuCampusEvent = async (req,res) =>{
 
 exports.deleteAll = async (req,res)=>{
     try {
-         await Event.find({}).remove({})
+         await Event.find({}).deleteMany({})
         //Event.remove({})
         res.status(200).json({
             success: true
@@ -376,5 +350,3 @@ exports.deleteAll = async (req,res)=>{
         
     }
 }
-// 
-// 
