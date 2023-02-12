@@ -4,7 +4,7 @@ const moment = require('moment');
 const Ticket = require('../models/tickets')
 const {sendEmail} = require('../helper/sendEmail')
 const User = require('../models/user')
-
+const Event = require('../models/event')
 
 exports.getAllTickets = async(req,res) =>{
   try {
@@ -131,78 +131,6 @@ exports.deleteTicketById = async (req,res) =>{
 }
 
 
-exports.checkTicket = async (req,res) =>{
-  try{
-
-  
-  const token = req.body
-  let check = await Token.findOne({
-    token: token,
-  });
-  console.log(check);
-  if(!check){
-    res.status(400).json({
-      message: "Token not found in the Database"
-    })
-  }
-
-  if(check.expiryDate < new Date()){
-    res.status(400).json({
-      message:"Token expired."
-    })
-  }
-  await Token.findByIdAndRemove(check._id);
-
-
-  //  res.status(200).send({
-  //   message: "Token verified successfully"
-  // });
-
-  
-} catch (error) {
-  console.log(error)
-}
-}
-
-
-
-
-
-// exports.getAllTickets = async (req,res) =>{
-
-// }
-
-
-
-
-
-
-
-//  exports.sendEventTicket = async (req,res)=>{
-//     try{
-//         const user = await User.findById(req.params.userId)
-        
-//             sendTicket(user.email,"BUSA Show Ticket","Your Ticket","BUSA","ezehdavidhoddy@gmail.com")
-
-
-//     res.status(200).json({
-//         success: true  
-//      })
-    
-// } catch (error){
-//     console.log(error)
-//     res.status(500).json({
-//         success:false,
-//         msg:error
-//     })
-// }
-
-
-
-
-
-
-
 exports.scan = async(req,res, next) =>{
   try {
     const {token, eventTitle} = req.body
@@ -227,32 +155,18 @@ exports.scan = async(req,res, next) =>{
       res.status(400).json({
         success: false
       })
-    } else if(check /*&& check.event.title === eventTitle*/){
+    } else if(check && check.event.title === eventTitle){
       res.status(200).json({
         success: true
       })
 
-      await Ticket.findByIdAndDelete(check._id)
+      await Ticket.findByIdAndUpdate(check._id,{
+        isUsed: true
+      })
 
       await Token.findOneAndDelete(token)
     }
 
-  // let check = await Token.findOne({
-  //   token: token,
-  // });
-  // console.log(check);
-  // if(!check){
-  //   res.status(400).json({
-  //     message: "Token not found in the Database"
-  //   })
-  // }
-
-  // if(check.expiryDate < new Date()){
-  //   res.status(400).json({
-  //     message:"Token expired."
-  //   })
-  // }
-  // await Token.findByIdAndRemove(check._id);
   } catch (error) {
     console.log(error)
     res.status(500).json({
@@ -287,5 +201,67 @@ exports.verifyPassWordForTicket = async (req,res,next) =>{
 
   } catch (error) {
     console.log(error)
+  }
+}
+
+exports.generateAndSaveTicket  = async(req,res) =>{
+  try {
+
+    const {email, title} = req.body
+    const user = await User.findOne({
+      email: email
+    })
+
+    const event = await Event.findOne({
+      title: title
+    })
+
+    if(user && event){
+      const token = await new Token({
+        token: ((Math.random() + 1).toString(36).substring(7)).toUpperCase(),
+        isUsed: false,
+        email
+      }).save();
+        
+    const qrCode =  await qr.toDataURL(token.token)
+    
+      const ticket = await new Ticket({
+        token: token.token,
+        qrCode,
+        email:token.email,
+        title: event.title
+      }).save();
+  
+    } else{
+      res.status(400).json({
+        success: false,
+        message: "Such email does not exist. Re-enter the correct email"
+      })
+    }
+   
+
+    res.status(200).json({
+      success:true
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      success: false,
+      message: "Internal Error Occured"
+    })
+  }
+
+}
+
+
+exports.deleteAll = async(req,res)=>{
+  try {
+    const events = await Event.find({}).deleteMany({})
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      success: false,
+      message: "Internal Error Occured"
+    })
   }
 }
