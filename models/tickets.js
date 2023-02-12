@@ -15,9 +15,13 @@ const ticketSchema = mongoose.Schema({
         trim:true
     },
    title:{
-   type: String,
-   trim:true,
-   required: true
+    type: String,
+    trim:true,
+    required: true
+   },
+   isUsed:{
+    type: Boolean,
+    default: false
    }
 })
 
