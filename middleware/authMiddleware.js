@@ -11,7 +11,7 @@ const protect = async (req, res, next) => {
             
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-            req.header = await User.findById(decoded.id).select('-password');
+            req.header = await User.findById(decoded._id).select('-password');
             next();
 
             
@@ -31,15 +31,30 @@ const protect = async (req, res, next) => {
 }
 
 const userRoleAuth = async (req,res, next) =>{
-    const user = await User.findById(req.param.userId)
-    
-    if(user.role == '2'){
-        next()
-    } else {
-        res.status(500).json({
-            success: false,
-            msg: "You are not authorized to do this"
-        })
+    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        try {
+            token = req.headers.authorization.split(' ')[1];
+            
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            const user = await User.findById(decoded._id);
+
+            if(user.role === 2){
+                next();
+            }
+            
+        } catch (error) {
+            console.log(error);
+            res.status(401).json({
+                success: false,
+                msg: 'Session Expired'
+            })
+        }
+    }
+
+    if (!token) {
+       res.clearCookie("token")
+       //return res.redirect(301,"http://localhost:3030/api/signin")
     }
 }
 
