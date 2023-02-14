@@ -1,15 +1,22 @@
 const News = require('../models/news')
-const cloudinary = require('../controllers/cloudinary')
+const cloudinary = require('cloudinary').v2
 const upload = require('../controllers/multer')
 const fs = require('fs')
 //const Category = require('../models/category')
 const moment = require('moment')
 
 
+
 let dateOfExpire = moment(new Date()).add(2, 'w').toDate();
 //@desc -> add news
 exports.addNews = async (req, res) =>{
     try {
+
+        cloudinary.config({
+            cloud_name: process.env.CLOUDINARY_CLOUDNAME,
+            api_key: process.env.CLOUDINARY_APIKEY,
+            api_secret: process.env.CLOUDINARY_APISECRET
+          });
         const {title,campus, content} = req.body;
         const image = req.files.image
         let  urls = []
@@ -38,7 +45,7 @@ exports.addNews = async (req, res) =>{
             }
         
               const news = await new News({
-                title, category, campus, content, images: urls,addedAt: Date.now()
+                title, campus, content, images: urls,addedAt: Date.now()
             }).save();
 
             res.status(200).json({
@@ -58,7 +65,7 @@ exports.addNews = async (req, res) =>{
                 }
               );
               const news = await new News({
-                title, category, campus, content, images: result.secure_url,addedAt: Date.now()
+                title, campus, images: result.secure_url,addedAt: Date.now()
             }).save();
     
             res.status(200).json({
