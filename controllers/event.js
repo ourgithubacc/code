@@ -2,11 +2,17 @@ const Event = require('../models/event');
 const sendToAll = require('../helper/notification');
 const fs = require('fs')
 const sendEmail = require('../helper/sendEmail')
-const cloudinary = require('../controllers/cloudinary')
-
+const cloudinary = require('cloudinary').v2
+require('dotenv').config()
 //const Imagetobase64 = require('image-to-base64')
 exports.uploadEvent = async (req,res,next) =>{
     try {
+            cloudinary.config({
+                cloud_name: process.env.CLOUDINARY_CLOUDNAME,
+                api_key: process.env.CLOUDINARY_APIKEY,
+                api_secret: process.env.CLOUDINARY_APISECRET
+            });
+
     const {title, description, campus, ticketPrice, venue, startDateAndTime, endDateAndTime} = req.body;
     const image = req.files.image
     let  urls = []
