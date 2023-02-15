@@ -13,7 +13,7 @@ exports.uploadEvent = async (req,res,next) =>{
                 api_secret: process.env.CLOUDINARY_APISECRET
             });
 
-    const {title, description, campus, ticketPrice, venue, startDateAndTime, endDateAndTime} = req.body;
+    const {title, content, campus, ticketPrice, venue, date, time, endDateAndTime} = req.body;
     const image = req.files.image
     let  urls = []
 
@@ -41,7 +41,7 @@ exports.uploadEvent = async (req,res,next) =>{
         }
     
         const event = await new Event({
-            title,ticketPrice,description,venue, images: urls, addedAt: Date.now(), campus, startDateAndTime, endDateAndTime
+            title,ticketPrice,content,venue, images: urls, addedAt: Date.now(), campus, date, time, endDateAndTime
         }).save()
 
         res.status(200).json({
@@ -62,7 +62,7 @@ exports.uploadEvent = async (req,res,next) =>{
           );
        
             const event = await new Event({
-                title,ticketPrice,description,venue, images: result.secure_url, addedAt: Date.now(), campus, startDateAndTime, endDateAndTime
+                title,ticketPrice,content,venue, images: result.secure_url, addedAt: Date.now(), campus, date, time, endDateAndTime
             }).save()
         res.status(200).json({
             success: true,
