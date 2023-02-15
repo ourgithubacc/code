@@ -119,6 +119,7 @@ exports.signup = async (req, res) => {
    // add user to the db
     user.save(async (err, user) => {
       if(err) {
+        console.log(err)
         return res.status(400).json({
           error: "Unable to save user to DB",
           err
