@@ -38,11 +38,14 @@ const eventSchema = mongoose.Schema({
         trim:true
     },
     time:{
-        //i.e time the event is actually starting
      type:String,
         trim:true
-},
-    endDateAndTime:{
+    },
+    endDate:{
+        type: String,
+        trim:true
+    },
+    endTime:{
         type: String,
         trim:true
     },
