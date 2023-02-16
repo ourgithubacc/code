@@ -219,6 +219,7 @@ exports.signin = async (req, res) => {
 exports.refreshAccessToken = async(req,res) =>{
   try {
     const user = req.user;
+    console.log(user)
     const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET,{expiresIn: "72h"})
     res.status(200).json({
       success: true,
