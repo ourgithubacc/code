@@ -260,7 +260,6 @@ exports.getIperuCampusEvents = async (req,res, next)=>{
          
     const events = await Event.find({campus: 'Iperu'})
          .sort('-addedAt')
-         .populate({ path: 'category', select: ['_id', 'category_name'] })
          .limit(Number(query.limit))
          .skip(Number(query.skip))
 
@@ -271,6 +270,7 @@ exports.getIperuCampusEvents = async (req,res, next)=>{
     
     
 } catch(error){
+    console.log(error)
     res.status(500).json({
         success: false,
         msg: "Internal Error Ocurred"
