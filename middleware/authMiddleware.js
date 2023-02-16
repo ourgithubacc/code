@@ -9,7 +9,7 @@ const protect = async (req, res, next) => {
         try {
             token = req.headers.authorization.split(' ')[1];
             
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 
             req.header = await User.findById(decoded._id).select('-password');
             next();
@@ -26,7 +26,10 @@ const protect = async (req, res, next) => {
 
     if (!token) {
        res.clearCookie("token")
-       //return res.redirect(301,"http://localhost:3030/api/signin")
+      res.send({
+        success: false,
+        message: "Login required"
+      })
     }
 }
 
