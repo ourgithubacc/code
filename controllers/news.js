@@ -65,7 +65,7 @@ exports.addNews = async (req, res) =>{
                 }
               );
               const news = await new News({
-                title, campus, images: result.secure_url,addedAt: Date.now()
+                title, campus, content, images: result.secure_url,addedAt: Date.now()
             }).save();
     
             res.status(200).json({
