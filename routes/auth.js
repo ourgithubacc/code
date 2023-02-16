@@ -13,7 +13,7 @@ const {
   forgotPassWord,
   authMiddleWare,
   isVerified,
-
+  refreshAccessToken,
   isAdmin,
   isAuthenticated
   
@@ -59,7 +59,7 @@ router.route("/resetpassword").put(protect, resetPassWord);
 
 router.get('/isVerified', isVerified)
 
-
+router.route('/refreshAccessToken').post(protect, refreshAccessToken)
 router.route("/signout").post(protect,  signout);
 
 router.route('/forgotPassWord').post(forgotPassWord)
