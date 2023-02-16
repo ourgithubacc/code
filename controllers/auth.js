@@ -203,18 +203,36 @@ exports.signin = async (req, res) => {
     // create a token
     const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET,{expiresIn: "72h"})
 
+    const refreshToken = jwt.sign({_id: user._id}, process.env.REFRESH_TOKEN_SECRET,{expiresIn:"1y"})
     // Put token in cookie
     res.cookie("token", token, { expire: new Date() + 100 })
+    res.cookie("refresh-token", refreshToken,{expire: new Date() + 10000 })
 
     // Send response to front end
     const { _id, email, role, firstname, lastname, campus} = user
-    return res.json({token, user: { _id, email, role, firstname, lastname, campus}})
+    return res.json({token,refreshToken, user: { _id, email, role, firstname, lastname, campus}})
   })
-    //  res.json({
-    //    success: true
-    //   })
+   
   
 }
+
+exports.refreshAccessToken = async(req,res) =>{
+  try {
+    const user = req.user;
+    const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET,{expiresIn: "72h"})
+    res.status(200).json({
+      success: true,
+      token
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      success: false,
+      message: "Internal Error Occured"
+    })
+  }
+}
+
 
 
 exports.signout = (req, res) => {
