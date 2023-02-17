@@ -62,7 +62,7 @@ exports.uploadEvent = async (req,res,next) =>{
           );
        
             const event = await new Event({
-                title,ticketPrice,content,venue, images: result.secure_url, addedAt: Date.now(), campus, date, time, endDateAndTime
+                title,ticketPrice,content,venue, images: result.secure_url, addedAt: Date.now(), campus, date, time, endDate, endTime
             }).save()
         res.status(200).json({
             success: true,
