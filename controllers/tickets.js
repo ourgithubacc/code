@@ -150,7 +150,7 @@ exports.scan = async(req,res, next) =>{
       token: token
     })
 
-
+  console.log(check)
     if(!check && !check.title === eventTitle){
       res.status(400).json({
         success: false
