@@ -155,6 +155,11 @@ exports.scan = async(req,res, next) =>{
       res.status(400).json({
         success: false
       })
+    } else if(check.isUsed === true){
+      res.status(400).json({
+        success: false
+        message:"TICKET ALREADY SCANNED!"
+      })
     } else if(check && check.title === eventTitle){
       res.status(200).json({
         success: true
