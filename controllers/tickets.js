@@ -160,7 +160,7 @@ exports.scan = async(req,res, next) =>{
         success: false
         message:"TICKET ALREADY SCANNED!"
       })
-    } else if(check && check.title === eventTitle){
+    } else if(check && check.title === eventTitle && check.isUsed === false){
       res.status(200).json({
         success: true
       })
@@ -169,7 +169,7 @@ exports.scan = async(req,res, next) =>{
         isUsed: true
       })
 
-      await Token.findOneAndDelete(token)
+     // await Token.findOneAndDelete(token)
     }
 
   } catch (error) {
