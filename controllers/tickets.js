@@ -151,11 +151,11 @@ exports.scan = async(req,res, next) =>{
     })
 
 
-    if(!check && !check.event.title === eventTitle){
+    if(!check && !check.title === eventTitle){
       res.status(400).json({
         success: false
       })
-    } else if(check && check.event.title === eventTitle){
+    } else if(check && check.title === eventTitle){
       res.status(200).json({
         success: true
       })
