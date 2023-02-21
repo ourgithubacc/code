@@ -150,26 +150,35 @@ exports.scan = async(req,res, next) =>{
       token: token
     })
 
-  console.log(check)
-    if(!check && !check.title === eventTitle){
+
+    if(!check){
       res.status(400).json({
-        success: false
+        success: false,
+        message:"No ticket found"
+      })
+    } else if(check.title !== eventTitle){
+      res.status(400).json({
+        success: false,
+        message:`This Ticket is for another event titled ${check.title}`
       })
     } else if(check.isUsed === true){
       res.status(400).json({
-        success: false
+        success: false,
         message:"TICKET ALREADY SCANNED!"
       })
-    } else if(check && check.title === eventTitle && check.isUsed === false){
+    }
+    else if(check && check.title === eventTitle && check.isUsed === false){
       res.status(200).json({
-        success: true
+        success: true,
+        message: "Success"
       })
 
-      await Ticket.findByIdAndUpdate(check._id,{
+     const ticket = await Ticket.findByIdAndUpdate(check._id,{
         isUsed: true
       })
 
-     // await Token.findOneAndDelete(token)
+      //await Token.findOneAndDelete(token)
+     console.log(ticket)
     }
 
   } catch (error) {
@@ -181,7 +190,6 @@ exports.scan = async(req,res, next) =>{
     })
   }
 }
-
 
 exports.verifyPassWordForTicket = async (req,res,next) =>{
   try {
